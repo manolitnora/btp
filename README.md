@@ -61,7 +61,7 @@ Rules only:                ██░░░░░░░░  20%  — read the rul
 + Correction Transcripts:  ████████░░  83%  — full behavioral transfer
 ```
 
-83% behavioral fidelity. Zero training. Two completely different models. Three text files.
+Validated: 83% behavioral fidelity cross-model. 7/7 on domain-agnostic test (bird spotting directory on GPT-5.1). Zero training. Three text files.
 
 ## Quick start
 
@@ -114,6 +114,24 @@ Transfer these three files to any model and it acts like your trained assistant 
 | Model lock-in | Yes | No — works on any model |
 | Verification | Eval suites | Talk to it and see |
 
+## The four layers
+
+Each layer teaches the model differently. All are text. All are transferable.
+
+| Layer | What it does | How | Compression |
+|-------|-------------|-----|-------------|
+| **L1: Rules** | Hard boundaries | "Never do X" | Literal compliance |
+| **L2: Pattern Interrupts** | Override instincts | "You'll want X → do Y" | First-read effective |
+| **L3: Correction Transcripts** | Simulated experience | Show wrong → corrected → right | Pattern recognition |
+| **L4: Question Chain** | Compressed runtime | Linked questions that drove discovery | Recreates search direction |
+
+```
+L1 — Rules:              "Never hallucinate."
+L2 — Pattern Interrupt:  "YOUR INSTINCT: present 5 options. WHAT WORKS: pick the best one."
+L3 — Transcript:         "WRONG: 'Here are some options...' CORRECTION: 'Just pick one.' RIGHT: [picks one]"
+L4 — Question Chain:     "1. can it transfer? → 2. why not 100%? → 3. what's the glue?"
+```
+
 ## How corrections compile
 
 The format that works:
@@ -126,23 +144,34 @@ TRIGGER: [when this pattern activates]
 
 Why this format: "Don't do X" is noise to a model that's never done X. "You'll want to do X — do Y instead" is actionable from first read. The format predicts the instinct and interrupts it.
 
+## Key insight
+
+> Culture is portable. Capability isn't.
+
+BTP makes any model behave the way you want. It can't make a weak model stronger. Pre-training defines the ceiling. BTP raises the behavioral floor. Different layers, complementary.
+
+Preferences aren't input — they're output of the correction loop. Nobody fills out a form. They just use it. The corrections accumulate. The system learns what you want by listening to what you push back on.
+
 ## File structure
 
 ```
 btp/
 ├── README.md                    ← you are here
+├── install.sh                   ← one-command full stack setup
 ├── universal/
-│   └── MEMORY.md                ← starter pack (10 universal corrections)
-├── examples/
-│   ├── coding.md                ← corrections for coding assistants
-│   ├── writing.md               ← corrections for writing assistants
-│   └── customer-support.md      ← corrections for support bots
+│   └── MEMORY.md                ← starter pack (11 universal corrections)
+├── compiler/
+│   ├── README.md                ← autonomous compilation pipeline
+│   ├── btpCompiler.ts           ← Node.js middleware
+│   ├── btp-compiler.sh          ← Shell hook (Claude Code)
+│   └── session-artifact.sh      ← A=C+Q+O+S session compiler
 ├── templates/
 │   ├── SOUL.md                  ← identity template
 │   ├── MEMORY.md                ← correction format template
 │   └── USER.md                  ← user profile template
-└── spec/
-    └── PROTOCOL.md              ← full technical specification
+├── spec/
+│   └── PROTOCOL.md              ← full technical specification
+└── LICENSE
 ```
 
 ## License
