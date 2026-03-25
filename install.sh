@@ -117,6 +117,37 @@ if [ -d "$HOME/.hermes" ]; then
     WIRED=true
 fi
 
+# OpenClaw
+if [ -d "$HOME/.openclaw" ]; then
+    echo "  Found OpenClaw — installing BTP files..."
+    mkdir -p "$HOME/.openclaw/workspace"
+    cp "$BTP_DIR/MEMORY.md" "$HOME/.openclaw/workspace/BTP-MEMORY.md"
+    cp "$BTP_DIR/btp-compiler.sh" "$HOME/.openclaw/workspace/"
+    echo "  ✓ BTP installed to ~/.openclaw/workspace/"
+    echo "  ⚠ Load BTP-MEMORY.md as system context in your agent config"
+    WIRED=true
+fi
+
+# MetaClaw
+if [ -d "$HOME/.metaclaw" ]; then
+    echo "  Found MetaClaw — installing BTP as skill..."
+    mkdir -p "$HOME/.metaclaw/skills"
+    # MetaClaw uses skills with auto-evolve — BTP corrections become a retrievable skill
+    cat > "$HOME/.metaclaw/skills/btp-corrections.md" << 'SKILL'
+---
+name: btp-corrections
+description: Behavioral corrections — pattern interrupts that shape response behavior
+trigger: always
+priority: high
+---
+
+$(cat "$BTP_DIR/MEMORY.md")
+SKILL
+    echo "  ✓ BTP skill installed to ~/.metaclaw/skills/"
+    echo "  MetaClaw will auto-retrieve BTP corrections via skill template matching"
+    WIRED=true
+fi
+
 if ! $WIRED; then
     echo "  No supported AI system detected."
     echo "  BTP files are at: $BTP_DIR/"
